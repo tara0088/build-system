@@ -5,6 +5,52 @@
   font-family: 'Georgia', 'Times New Roman', serif;
 }
 
+/* Template selector styles */
+.template-selector {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.template-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #cbd5e0;
+  background-color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.template-btn:hover {
+  background-color: #edf2f7;
+}
+
+.template-btn.active {
+  background-color: #4297d4;
+  color: white;
+  border-color: #4297d4;
+}
+
+/* Template-specific styles */
+.preview-page.template-classic {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.preview-page.template-modern {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.preview-page.template-minimal {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 300;
+}
+
 .top-nav {
   display: flex;
   justify-content: center;

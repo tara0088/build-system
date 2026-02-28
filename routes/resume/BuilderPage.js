@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './BuilderPage.css';
 
 const BuilderPage = () => {
+  const [selectedTemplate, setSelectedTemplate] = useState('classic');
   const [formData, setFormData] = useState({
     personalInfo: {
       name: '',
@@ -20,8 +21,13 @@ const BuilderPage = () => {
     }
   });
 
-  // Load data from localStorage on component mount
+  // Load template from localStorage on component mount
   useEffect(() => {
+    const savedTemplate = localStorage.getItem('resumeTemplate');
+    if (savedTemplate) {
+      setSelectedTemplate(savedTemplate);
+    }
+    
     const savedData = localStorage.getItem('resumeBuilderData');
     if (savedData) {
       try {
@@ -36,7 +42,8 @@ const BuilderPage = () => {
   // Auto-save data to localStorage whenever formData changes
   useEffect(() => {
     localStorage.setItem('resumeBuilderData', JSON.stringify(formData));
-  }, [formData]);
+    localStorage.setItem('resumeTemplate', selectedTemplate);
+  }, [formData, selectedTemplate]);
 
   const handleChange = (section, field, value, index = null) => {
     if (index !== null) {
@@ -205,11 +212,58 @@ const BuilderPage = () => {
     return suggestions.slice(0, 3); // Return max 3 suggestions
   };
 
+  // Generate improvement suggestions
+  const generateImprovements = () => {
+    const improvements = [];
+    const summaryWords = formData.summary.trim().split(/\s+/).filter(word => word.length > 0);
+    const skillsList = formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0);
+    
+    if (formData.projects.length < 2) {
+      improvements.push("Consider adding more projects to showcase your skills.");
+    }
+    
+    const hasNumbers = [
+      ...formData.experience.flatMap(exp => [exp.description]),
+      ...formData.projects.flatMap(proj => [proj.description])
+    ].some(text => /\d|%/i.test(text));
+    
+    if (!hasNumbers) {
+      improvements.push("Include measurable impact with numbers in your bullets.");
+    }
+    
+    if (summaryWords.length < 40) {
+      improvements.push("Expand your summary to at least 40 words.");
+    }
+    
+    if (skillsList.length < 8) {
+      improvements.push("Add more skills to reach at least 8 items.");
+    }
+    
+    if (formData.experience.length === 0) {
+      improvements.push("Consider adding internship or project work experience.");
+    }
+    
+    return improvements.slice(0, 3); // Return max 3 improvements
+  };
+
+  // Check if a bullet starts with an action verb
+  const startsWithActionVerb = (bullet) => {
+    const actionVerbs = ['built', 'developed', 'designed', 'implemented', 'led', 'improved', 'created', 'optimized', 'automated'];
+    const lowerBullet = bullet.toLowerCase().trim();
+    return actionVerbs.some(verb => lowerBullet.startsWith(verb));
+  };
+
+  // Check if a bullet has numeric indicators
+  const hasNumericIndicator = (bullet) => {
+    return /\d|%/i.test(bullet);
+  };
+
   const atsScore = calculateATSScore();
   const suggestions = generateSuggestions();
+  const improvements = generateImprovements();
 
   return (
-    <div className="builder-page">
+    <div className={`builder-page template-${selectedTemplate}`}>
       <div className="top-nav">
         <a href="/">Home</a>
         <a href="/builder" className="active">Builder</a>
@@ -219,6 +273,27 @@ const BuilderPage = () => {
       
       <div className="page-title">
         <h1>AI Resume Builder</h1>
+      </div>
+      
+      <div className="template-selector">
+        <button 
+          className={`template-btn ${selectedTemplate === 'classic' ? 'active' : ''}`}
+          onClick={() => setSelectedTemplate('classic')}
+        >
+          Classic
+        </button>
+        <button 
+          className={`template-btn ${selectedTemplate === 'modern' ? 'active' : ''}`}
+          onClick={() => setSelectedTemplate('modern')}
+        >
+          Modern
+        </button>
+        <button 
+          className={`template-btn ${selectedTemplate === 'minimal' ? 'active' : ''}`}
+          onClick={() => setSelectedTemplate('minimal')}
+        >
+          Minimal
+        </button>
       </div>
       
       <div className="builder-container">
@@ -242,6 +317,17 @@ const BuilderPage = () => {
                 <ul>
                   {suggestions.map((suggestion, index) => (
                     <li key={index}>{suggestion}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {improvements.length > 0 && (
+              <div className="improvements-section">
+                <h3>Top 3 Improvements:</h3>
+                <ul>
+                  {improvements.map((improvement, index) => (
+                    <li key={index}>{improvement}</li>
                   ))}
                 </ul>
               </div>
@@ -369,6 +455,12 @@ const BuilderPage = () => {
                   value={exp.description}
                   onChange={(e) => handleChange('experience', 'description', e.target.value, index)}
                 />
+                {!startsWithActionVerb(exp.description) && exp.description.trim() && (
+                  <div className="guidance-suggestion">Start with a strong action verb.</div>
+                )}
+                {exp.description.trim() && !hasNumericIndicator(exp.description) && (
+                  <div className="guidance-suggestion">Add measurable impact (numbers).</div>
+                )}
                 {index > 0 && (
                   <button 
                     type="button" 
@@ -409,6 +501,12 @@ const BuilderPage = () => {
                   value={proj.link}
                   onChange={(e) => handleChange('projects', 'link', e.target.value, index)}
                 />
+                {!startsWithActionVerb(proj.description) && proj.description.trim() && (
+                  <div className="guidance-suggestion">Start with a strong action verb.</div>
+                )}
+                {proj.description.trim() && !hasNumericIndicator(proj.description) && (
+                  <div className="guidance-suggestion">Add measurable impact (numbers).</div>
+                )}
                 {index > 0 && (
                   <button 
                     type="button" 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './PreviewPage.css';
 
 const PreviewPage = () => {
+  const [selectedTemplate, setSelectedTemplate] = useState('classic');
   const [resumeData, setResumeData] = useState({
     personalInfo: {
       name: '',
@@ -21,6 +22,11 @@ const PreviewPage = () => {
   });
 
   useEffect(() => {
+    const savedTemplate = localStorage.getItem('resumeTemplate');
+    if (savedTemplate) {
+      setSelectedTemplate(savedTemplate);
+    }
+    
     const savedData = localStorage.getItem('resumeBuilderData');
     if (savedData) {
       try {
@@ -33,7 +39,7 @@ const PreviewPage = () => {
   }, []);
 
   return (
-    <div className="preview-page">
+    <div className={`preview-page template-${selectedTemplate}`}>
       <div className="top-nav">
         <a href="/">Home</a>
         <a href="/builder">Builder</a>
@@ -43,6 +49,27 @@ const PreviewPage = () => {
       
       <div className="page-title">
         <h1>Resume Preview</h1>
+      </div>
+      
+      <div className="template-selector">
+        <button 
+          className={`template-btn ${selectedTemplate === 'classic' ? 'active' : ''}`}
+          onClick={() => setSelectedTemplate('classic')}
+        >
+          Classic
+        </button>
+        <button 
+          className={`template-btn ${selectedTemplate === 'modern' ? 'active' : ''}`}
+          onClick={() => setSelectedTemplate('modern')}
+        >
+          Modern
+        </button>
+        <button 
+          className={`template-btn ${selectedTemplate === 'minimal' ? 'active' : ''}`}
+          onClick={() => setSelectedTemplate('minimal')}
+        >
+          Minimal
+        </button>
       </div>
       
       <div className="resume-container">
