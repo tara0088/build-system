@@ -3,6 +3,7 @@ import './BuilderPage.css';
 
 const BuilderPage = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('classic');
+  const [selectedColor, setSelectedColor] = useState('teal');
   const [formData, setFormData] = useState({
     personalInfo: {
       name: '',
@@ -13,7 +14,7 @@ const BuilderPage = () => {
     summary: '',
     education: [{ institution: '', degree: '', year: '' }],
     experience: [{ company: '', position: '', duration: '', description: '' }],
-    projects: [{ name: '', description: '', techStack: [], liveUrl: '', githubUrl: '' }], // Updated structure
+    projects: [{ name: '', description: '', techStack: [], liveUrl: '', githubUrl: '' }],
     skills: {
       technical: [],
       soft: [],
@@ -32,6 +33,11 @@ const BuilderPage = () => {
       setSelectedTemplate(savedTemplate);
     }
     
+    const savedColor = localStorage.getItem('resumeColorTheme');
+    if (savedColor) {
+      setSelectedColor(savedColor);
+    }
+    
     const savedData = localStorage.getItem('resumeBuilderData');
     if (savedData) {
       try {
@@ -47,7 +53,8 @@ const BuilderPage = () => {
   useEffect(() => {
     localStorage.setItem('resumeBuilderData', JSON.stringify(formData));
     localStorage.setItem('resumeTemplate', selectedTemplate);
-  }, [formData, selectedTemplate]);
+    localStorage.setItem('resumeColorTheme', selectedColor);
+  }, [formData, selectedTemplate, selectedColor]);
 
   const handleChange = (section, field, value, index = null) => {
     if (index !== null) {
@@ -395,8 +402,24 @@ const BuilderPage = () => {
   const suggestions = generateSuggestions();
   const improvements = generateImprovements();
 
+  // Template thumbnails data
+  const templates = [
+    { id: 'classic', name: 'Classic', description: 'Traditional single-column layout' },
+    { id: 'modern', name: 'Modern', description: 'Two-column with colored sidebar' },
+    { id: 'minimal', name: 'Minimal', description: 'Clean single-column, no borders' }
+  ];
+
+  // Color themes data
+  const colorThemes = [
+    { id: 'teal', name: 'Teal', color: 'hsl(168, 60%, 40%)' },
+    { id: 'navy', name: 'Navy', color: 'hsl(220, 60%, 35%)' },
+    { id: 'burgundy', name: 'Burgundy', color: 'hsl(345, 60%, 35%)' },
+    { id: 'forest', name: 'Forest', color: 'hsl(150, 50%, 30%)' },
+    { id: 'charcoal', name: 'Charcoal', color: 'hsl(0, 0%, 25%)' }
+  ];
+
   return (
-    <div className={`builder-page template-${selectedTemplate}`}>
+    <div className={`builder-page template-${selectedTemplate} color-${selectedColor}`}>
       <div className="top-nav">
         <a href="/">Home</a>
         <a href="/builder" className="active">Builder</a>
@@ -408,25 +431,43 @@ const BuilderPage = () => {
         <h1>AI Resume Builder</h1>
       </div>
       
-      <div className="template-selector">
-        <button 
-          className={`template-btn ${selectedTemplate === 'classic' ? 'active' : ''}`}
-          onClick={() => setSelectedTemplate('classic')}
-        >
-          Classic
-        </button>
-        <button 
-          className={`template-btn ${selectedTemplate === 'modern' ? 'active' : ''}`}
-          onClick={() => setSelectedTemplate('modern')}
-        >
-          Modern
-        </button>
-        <button 
-          className={`template-btn ${selectedTemplate === 'minimal' ? 'active' : ''}`}
-          onClick={() => setSelectedTemplate('minimal')}
-        >
-          Minimal
-        </button>
+      <div className="template-and-color-picker">
+        {/* Template Picker */}
+        <div className="template-picker">
+          <h3>Select Template</h3>
+          <div className="template-thumbnails">
+            {templates.map(template => (
+              <div 
+                key={template.id}
+                className={`template-thumbnail ${selectedTemplate === template.id ? 'active' : ''}`}
+                onClick={() => setSelectedTemplate(template.id)}
+                title={template.description}
+              >
+                <div className={`thumbnail-preview template-${template.id}-preview`}></div>
+                <span>{template.name}</span>
+                {selectedTemplate === template.id && <div className="checkmark">✓</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Color Theme Picker */}
+        <div className="color-picker">
+          <h3>Select Color Theme</h3>
+          <div className="color-options">
+            {colorThemes.map(theme => (
+              <div 
+                key={theme.id}
+                className={`color-option ${selectedColor === theme.id ? 'active' : ''}`}
+                style={{ backgroundColor: theme.color }}
+                onClick={() => setSelectedColor(theme.id)}
+                title={theme.name}
+              >
+                {selectedColor === theme.id && <div className="color-checkmark">✓</div>}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
       
       <div className="builder-container">

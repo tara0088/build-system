@@ -3,6 +3,7 @@ import './PreviewPage.css';
 
 const PreviewPage = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('classic');
+  const [selectedColor, setSelectedColor] = useState('teal');
   const [resumeData, setResumeData] = useState({
     personalInfo: {
       name: '',
@@ -31,6 +32,11 @@ const PreviewPage = () => {
       setSelectedTemplate(savedTemplate);
     }
     
+    const savedColor = localStorage.getItem('resumeColorTheme');
+    if (savedColor) {
+      setSelectedColor(savedColor);
+    }
+    
     const savedData = localStorage.getItem('resumeBuilderData');
     if (savedData) {
       try {
@@ -42,6 +48,12 @@ const PreviewPage = () => {
     }
   }, []);
 
+  // Save template and color to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('resumeTemplate', selectedTemplate);
+    localStorage.setItem('resumeColorTheme', selectedColor);
+  }, [selectedTemplate, selectedColor]);
+
   // Check for validation issues
   const hasValidationIssues = !resumeData.personalInfo.name || 
                              (resumeData.projects.filter(p => p.name || p.description).length === 0 && 
@@ -49,6 +61,29 @@ const PreviewPage = () => {
 
   const printResume = () => {
     window.print();
+  };
+
+  const showToast = () => {
+    const toast = document.createElement('div');
+    toast.textContent = 'PDF export ready! Check your downloads.';
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4297d4;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      document.body.removeChild(toast);
+    }, 3000);
   };
 
   const copyResumeAsText = () => {
@@ -140,8 +175,24 @@ const PreviewPage = () => {
       });
   };
 
+  // Template thumbnails data
+  const templates = [
+    { id: 'classic', name: 'Classic', description: 'Traditional single-column layout' },
+    { id: 'modern', name: 'Modern', description: 'Two-column with colored sidebar' },
+    { id: 'minimal', name: 'Minimal', description: 'Clean single-column, no borders' }
+  ];
+
+  // Color themes data
+  const colorThemes = [
+    { id: 'teal', name: 'Teal', color: 'hsl(168, 60%, 40%)' },
+    { id: 'navy', name: 'Navy', color: 'hsl(220, 60%, 35%)' },
+    { id: 'burgundy', name: 'Burgundy', color: 'hsl(345, 60%, 35%)' },
+    { id: 'forest', name: 'Forest', color: 'hsl(150, 50%, 30%)' },
+    { id: 'charcoal', name: 'Charcoal', color: 'hsl(0, 0%, 25%)' }
+  ];
+
   return (
-    <div className={`preview-page template-${selectedTemplate}`}>
+    <div className={`preview-page template-${selectedTemplate} color-${selectedColor}`}>
       <div className="top-nav">
         <a href="/">Home</a>
         <a href="/builder">Builder</a>
@@ -154,8 +205,8 @@ const PreviewPage = () => {
       </div>
       
       <div className="export-buttons">
-        <button className="export-btn print-btn" onClick={printResume}>
-          Print / Save as PDF
+        <button className="export-btn print-btn" onClick={() => { printResume(); showToast(); }}>
+          Download PDF
         </button>
         <button className="export-btn copy-btn" onClick={copyResumeAsText}>
           Copy Resume as Text
@@ -168,25 +219,43 @@ const PreviewPage = () => {
         </div>
       )}
       
-      <div className="template-selector">
-        <button 
-          className={`template-btn ${selectedTemplate === 'classic' ? 'active' : ''}`}
-          onClick={() => setSelectedTemplate('classic')}
-        >
-          Classic
-        </button>
-        <button 
-          className={`template-btn ${selectedTemplate === 'modern' ? 'active' : ''}`}
-          onClick={() => setSelectedTemplate('modern')}
-        >
-          Modern
-        </button>
-        <button 
-          className={`template-btn ${selectedTemplate === 'minimal' ? 'active' : ''}`}
-          onClick={() => setSelectedTemplate('minimal')}
-        >
-          Minimal
-        </button>
+      <div className="template-and-color-picker">
+        {/* Template Picker */}
+        <div className="template-picker">
+          <h3>Select Template</h3>
+          <div className="template-thumbnails">
+            {templates.map(template => (
+              <div 
+                key={template.id}
+                className={`template-thumbnail ${selectedTemplate === template.id ? 'active' : ''}`}
+                onClick={() => setSelectedTemplate(template.id)}
+                title={template.description}
+              >
+                <div className={`thumbnail-preview template-${template.id}-preview`}></div>
+                <span>{template.name}</span>
+                {selectedTemplate === template.id && <div className="checkmark">✓</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Color Theme Picker */}
+        <div className="color-picker">
+          <h3>Select Color Theme</h3>
+          <div className="color-options">
+            {colorThemes.map(theme => (
+              <div 
+                key={theme.id}
+                className={`color-option ${selectedColor === theme.id ? 'active' : ''}`}
+                style={{ backgroundColor: theme.color }}
+                onClick={() => setSelectedColor(theme.id)}
+                title={theme.name}
+              >
+                {selectedColor === theme.id && <div className="color-checkmark">✓</div>}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
       
       <div className="resume-container">

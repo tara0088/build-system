@@ -5,6 +5,316 @@
   font-family: 'Georgia', 'Times New Roman', serif;
 }
 
+/* Template and color picker section */
+.template-and-color-picker {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.template-picker h3,
+.color-picker h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.template-thumbnails {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.template-thumbnail {
+  position: relative;
+  width: 120px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem;
+  transition: all 0.2s;
+}
+
+.template-thumbnail:hover {
+  background-color: #edf2f7;
+}
+
+.template-thumbnail.active {
+  border-color: #4297d4;
+  background-color: #ebf8ff;
+}
+
+.thumbnail-preview {
+  width: 100%;
+  height: 80px;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  background-color: white;
+}
+
+/* Template-specific preview styles */
+.template-classic-preview {
+  position: relative;
+}
+
+.template-classic-preview::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 80%;
+  height: 5px;
+  background-color: #cbd5e0;
+}
+
+.template-classic-preview::after {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 10px;
+  width: 60%;
+  height: 3px;
+  background-color: #cbd5e0;
+}
+
+.template-modern-preview {
+  display: flex;
+}
+
+.template-modern-preview::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 30%;
+  height: 100%;
+  background-color: rgba(66, 151, 212, 0.3);
+}
+
+.template-modern-preview::after {
+  content: '';
+  position: absolute;
+  left: 30%;
+  top: 10px;
+  width: 65%;
+  height: 5px;
+  background-color: #cbd5e0;
+}
+
+.template-minimal-preview {
+  position: relative;
+}
+
+.template-minimal-preview::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 70%;
+  height: 4px;
+  background-color: #cbd5e0;
+  opacity: 0.5;
+}
+
+.template-minimal-preview::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  width: 50%;
+  height: 3px;
+  background-color: #cbd5e0;
+  opacity: 0.5;
+}
+
+.checkmark {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #4297d4;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.color-options {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.color-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.active {
+  border-color: #2d3748;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #2d3748;
+}
+
+.color-checkmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Template-specific styles */
+.Preview-page.template-classic {
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.Preview-page.template-modern {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.Preview-page.template-minimal {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 300;
+}
+
+/* Color theme styles */
+.Preview-page.color-teal .resume-header h1,
+.Preview-page.color-teal .resume-section h2,
+.Preview-page.color-teal .resume-header,
+.Preview-page.color-teal .resume-section {
+  color: hsl(168, 60%, 40%);
+  border-color: hsl(168, 60%, 40%);
+}
+
+.Preview-page.color-teal .template-btn.active,
+.Preview-page.color-teal .print-btn {
+  background-color: hsl(168, 60%, 40%);
+  border-color: hsl(168, 60%, 40%);
+}
+
+.Preview-page.color-navy .resume-header h1,
+.Preview-page.color-navy .resume-section h2,
+.Preview-page.color-navy .resume-header,
+.Preview-page.color-navy .resume-section {
+  color: hsl(220, 60%, 35%);
+  border-color: hsl(220, 60%, 35%);
+}
+
+.Preview-page.color-navy .template-btn.active,
+.Preview-page.color-navy .print-btn {
+  background-color: hsl(220, 60%, 35%);
+  border-color: hsl(220, 60%, 35%);
+}
+
+.Preview-page.color-burgundy .resume-header h1,
+.Preview-page.color-burgundy .resume-section h2,
+.Preview-page.color-burgundy .resume-header,
+.Preview-page.color-burgundy .resume-section {
+  color: hsl(345, 60%, 35%);
+  border-color: hsl(345, 60%, 35%);
+}
+
+.Preview-page.color-burgundy .template-btn.active,
+.Preview-page.color-burgundy .print-btn {
+  background-color: hsl(345, 60%, 35%);
+  border-color: hsl(345, 60%, 35%);
+}
+
+.Preview-page.color-forest .resume-header h1,
+.Preview-page.color-forest .resume-section h2,
+.Preview-page.color-forest .resume-header,
+.Preview-page.color-forest .resume-section {
+  color: hsl(150, 50%, 30%);
+  border-color: hsl(150, 50%, 30%);
+}
+
+.Preview-page.color-forest .template-btn.active,
+.Preview-page.color-forest .print-btn {
+  background-color: hsl(150, 50%, 30%);
+  border-color: hsl(150, 50%, 30%);
+}
+
+.Preview-page.color-charcoal .resume-header h1,
+.Preview-page.color-charcoal .resume-section h2,
+.Preview-page.color-charcoal .resume-header,
+.Preview-page.color-charcoal .resume-section {
+  color: hsl(0, 0%, 25%);
+  border-color: hsl(0, 0%, 25%);
+}
+
+.Preview-page.color-charcoal .template-btn.active,
+.Preview-page.color-charcoal .print-btn {
+  background-color: hsl(0, 0%, 25%);
+  border-color: hsl(0, 0%, 25%);
+}
+
+/* Classic template specific styles */
+.template-classic .resume-header {
+  border-bottom: 2px solid;
+}
+
+.template-classic .resume-section h2 {
+  border-bottom: 1px solid;
+  padding-bottom: 0.3rem;
+}
+
+/* Modern template specific styles */
+.template-modern .resume-container {
+  display: grid;
+  grid-template-columns: 25% 1fr;
+  gap: 1rem;
+}
+
+.template-modern .sidebar-content {
+  grid-column: 1;
+  border-right: 2px solid;
+  padding-right: 1rem;
+}
+
+.template-modern .main-content {
+  grid-column: 2;
+  padding-left: 1rem;
+}
+
+/* Minimal template specific styles */
+.template-minimal .resume-header {
+  border-bottom: none;
+  text-align: left;
+}
+
+.template-minimal .resume-section h2 {
+  border-bottom: none;
+  margin-bottom: 0.5rem;
+}
+
+.template-minimal .resume-header,
+.template-minimal .resume-section {
+  margin-bottom: 1.5rem;
+}
+
+.template-minimal .entry-header {
+  border-bottom: none;
+}
+
 /* Export buttons styles */
 .export-buttons {
   display: flex;
@@ -92,20 +402,6 @@
   border-color: #4297d4;
 }
 
-/* Template-specific styles */
-.preview-page.template-classic {
-  font-family: 'Times New Roman', Times, serif;
-}
-
-.preview-page.template-modern {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.preview-page.template-minimal {
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: 300;
-}
-
 .top-nav {
   display: flex;
   justify-content: center;
@@ -164,7 +460,7 @@
   text-align: center;
   padding-bottom: 1.5rem;
   margin-bottom: 2rem;
-  border-bottom: 2px solid #333;
+  border-bottom: 2px solid;
 }
 
 .resume-header h1 {
@@ -183,12 +479,19 @@
 
 .resume-section {
   margin-bottom: 1.8rem;
+  border-bottom: 1px solid;
+  padding-bottom: 1.5rem;
+}
+
+.resume-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .resume-section h2 {
   margin: 0 0 1rem;
   padding-bottom: 0.3rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid;
   color: #2d3748;
   font-size: 1.3rem;
   font-weight: bold;
@@ -213,6 +516,8 @@
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 0.3rem;
+  border-bottom: 1px solid;
+  padding-bottom: 0.25rem;
 }
 
 .entry-header h3 {
@@ -258,7 +563,7 @@
 }
 
 .skill-category h4 {
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.3rem 0;
   font-size: 1rem;
   color: #2d3748;
   font-weight: bold;
@@ -267,6 +572,33 @@
 .skill-category p {
   margin: 0;
   color: #333;
+}
+
+.tech-stack-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.tech-tag-preview {
+  background-color: #e2e8f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.skill-tags-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.skill-tag-preview {
+  background-color: #e2e8f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
 }
 
 /* Print styles */
@@ -286,7 +618,7 @@
   
   .top-nav,
   .export-buttons,
-  .template-selector,
+  .template-and-color-picker,
   .page-title,
   .validation-warning {
     display: none !important;
