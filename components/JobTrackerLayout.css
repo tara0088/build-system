@@ -1,0 +1,17 @@
+.job-tracker-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.job-tracker-main {
+  flex: 1;
+  padding-top: 20px;
+  background-color: #f5f5f5;
+}
+
+.job-tracker-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}

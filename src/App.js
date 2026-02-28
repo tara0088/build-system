@@ -1,6 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import PremiumLayout from '../components/PremiumLayout';
+import JobTrackerLayout from '../components/JobTrackerLayout';
 import ProblemPage from '../routes/rb/01-problem';
 import MarketPage from '../routes/rb/02-market';
 import ArchitecturePage from '../routes/rb/03-architecture';
@@ -9,11 +10,18 @@ import LLDPage from '../routes/rb/05-lld';
 import BuildPage from '../routes/rb/06-build';
 import TestPage from '../routes/rb/07-test';
 import ShipPage from '../routes/rb/08-ship';
-import ProofPage from '../routes/rb/proof';
+import RBProofPage from '../routes/rb/proof';
 import HomePage from '../routes/resume/HomePage';
 import BuilderPage from '../routes/resume/BuilderPage';
 import PreviewPage from '../routes/resume/PreviewPage';
 import ResumeProofPage from '../routes/resume/ProofPage';
+import DashboardPage from '../routes/dashboard/DashboardPage';
+import JobsPage from '../routes/jobs/JobsPage';
+import AnalyzePage from '../routes/analyze/AnalyzePage';
+import ResumeManagerPage from '../routes/resume/ResumePage';
+import ApplicationsPage from '../routes/applications/ApplicationsPage';
+import SettingsPage from '../routes/settings/SettingsPage';
+import ProofPage from '../routes/proof/ProofPage';
 
 const App = () => {
   return (
@@ -62,16 +70,22 @@ const App = () => {
         } />
         <Route path="/rb/proof" element={
           <PremiumLayout currentPage={9} isProofPage={true}>
-            <ProofPage />
+            <RBProofPage />
           </PremiumLayout>
         } />
-      </Routes>
-      <Routes>
         {/* AI Resume Builder Main App Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/builder" element={<BuilderPage />} />
         <Route path="/preview" element={<PreviewPage />} />
-        <Route path="/proof" element={<ResumeProofPage />} />
+        <Route path="/proof-resume" element={<ResumeProofPage />} />
+        {/* Job Application Tracker Routes */}
+        <Route path="/dashboard" element={<JobTrackerLayout />}><Route path="" element={<DashboardPage />} /></Route>
+        <Route path="/jobs" element={<JobTrackerLayout />}><Route path="" element={<JobsPage />} /></Route>
+        <Route path="/analyze" element={<JobTrackerLayout />}><Route path="" element={<AnalyzePage />} /></Route>
+        <Route path="/resume" element={<JobTrackerLayout />}><Route path="" element={<ResumeManagerPage />} /></Route>
+        <Route path="/applications" element={<JobTrackerLayout />}><Route path="" element={<ApplicationsPage />} /></Route>
+        <Route path="/settings" element={<JobTrackerLayout />}><Route path="" element={<SettingsPage />} /></Route>
+        <Route path="/proof" element={<JobTrackerLayout />}><Route path="" element={<ProofPage />} /></Route>
       </Routes>
     </Router>
   );

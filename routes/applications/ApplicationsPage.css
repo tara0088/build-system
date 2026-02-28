@@ -1,0 +1,187 @@
+.applications-page {
+  padding: 0;
+}
+
+.applications-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.applications-header h1 {
+  color: #333;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.applications-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.controls-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.search-filter-group {
+  display: flex;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+.search-input,
+.filter-select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.search-input {
+  flex-grow: 1;
+  max-width: 300px;
+}
+
+.add-application-btn {
+  padding: 10px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.add-application-btn:hover {
+  background: #45a049;
+}
+
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.application-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.application-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.job-info h3 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.job-info .company {
+  margin: 0;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.status-badge {
+  padding: 5px 15px;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.application-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.value {
+  color: #333;
+}
+
+.application-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.status-dropdown {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.delete-btn {
+  padding: 8px 15px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+  background: #d32f2f;
+}
+
+.no-applications {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .controls-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-filter-group {
+    flex-direction: column;
+  }
+  
+  .application-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .application-actions {
+    flex-direction: column;
+  }
+  
+  .delete-btn {
+    align-self: flex-end;
+  }
+}
