@@ -59,6 +59,139 @@ const PreviewPage = () => {
                              (resumeData.projects.filter(p => p.name || p.description).length === 0 && 
                               resumeData.experience.filter(e => e.company || e.position).length === 0);
 
+  // Calculate ATS Score
+  const calculateATSScore = () => {
+    let score = 0;
+    
+    // +10 if name provided
+    if (resumeData.personalInfo.name) {
+      score += 10;
+    }
+    
+    // +10 if email provided
+    if (resumeData.personalInfo.email) {
+      score += 10;
+    }
+    
+    // +10 if summary > 50 chars
+    if (resumeData.summary && resumeData.summary.length > 50) {
+      score += 10;
+    }
+    
+    // +15 if at least 1 experience entry with bullets
+    if (resumeData.experience.length >= 1 && 
+        resumeData.experience.some(exp => exp.description && exp.description.trim() !== '')) {
+      score += 15;
+    }
+    
+    // +10 if at least 1 education entry
+    if (resumeData.education.length >= 1 && 
+        resumeData.education.some(edu => edu.institution || edu.degree || edu.year)) {
+      score += 10;
+    }
+    
+    // +10 if at least 5 skills added
+    const totalSkills = resumeData.skills.technical.length + 
+                       resumeData.skills.soft.length + 
+                       resumeData.skills.tools.length;
+    if (totalSkills >= 5) {
+      score += 10;
+    }
+    
+    // +10 if at least 1 project added
+    if (resumeData.projects.length >= 1 && 
+        resumeData.projects.some(proj => proj.name || proj.description)) {
+      score += 10;
+    }
+    
+    // +5 if phone provided
+    if (resumeData.personalInfo.phone) {
+      score += 5;
+    }
+    
+    // +5 if LinkedIn provided
+    if (resumeData.links.linkedin) {
+      score += 5;
+    }
+    
+    // +5 if GitHub provided
+    if (resumeData.links.github) {
+      score += 5;
+    }
+    
+    // +10 if summary contains action verbs
+    const actionVerbs = ['built', 'led', 'designed', 'improved', 'managed', 'created', 'developed', 'implemented', 'optimized', 'established', 'launched', 'executed', 'coordinated', 'organized', 'supervised', 'trained', 'facilitated', 'negotiated', 'resolved', 'analyzed'];
+    const summaryLower = resumeData.summary.toLowerCase();
+    if (actionVerbs.some(verb => summaryLower.includes(verb))) {
+      score += 10;
+    }
+    
+    // Cap at 100
+    return Math.min(score, 100);
+  };
+
+  // Generate improvement suggestions
+  const generateImprovementSuggestions = () => {
+    const suggestions = [];
+    
+    if (!resumeData.personalInfo.name) {
+      suggestions.push("Add your name (+10 points)");
+    }
+    
+    if (!resumeData.personalInfo.email) {
+      suggestions.push("Add your email (+10 points)");
+    }
+    
+    if (!resumeData.summary || resumeData.summary.length <= 50) {
+      suggestions.push("Write a stronger summary (>50 chars, +10 points)");
+    }
+    
+    if (resumeData.experience.length === 0 || 
+        !resumeData.experience.some(exp => exp.description && exp.description.trim() !== '')) {
+      suggestions.push("Add at least 1 experience with bullet points (+15 points)");
+    }
+    
+    if (resumeData.education.length === 0 || 
+        !resumeData.education.some(edu => edu.institution || edu.degree || edu.year)) {
+      suggestions.push("Add at least 1 education entry (+10 points)");
+    }
+    
+    const totalSkills = resumeData.skills.technical.length + 
+                       resumeData.skills.soft.length + 
+                       resumeData.skills.tools.length;
+    if (totalSkills < 5) {
+      suggestions.push(`Add more skills (currently ${totalSkills}, need 5+, +10 points)`);
+    }
+    
+    if (resumeData.projects.length === 0 || 
+        !resumeData.projects.some(proj => proj.name || proj.description)) {
+      suggestions.push("Add at least 1 project (+10 points)");
+    }
+    
+    if (!resumeData.personalInfo.phone) {
+      suggestions.push("Add your phone (+5 points)");
+    }
+    
+    if (!resumeData.links.linkedin) {
+      suggestions.push("Add LinkedIn profile (+5 points)");
+    }
+    
+    if (!resumeData.links.github) {
+      suggestions.push("Add GitHub profile (+5 points)");
+    }
+    
+    const actionVerbs = ['built', 'led', 'designed', 'improved', 'managed', 'created', 'developed', 'implemented', 'optimized', 'established', 'launched', 'executed', 'coordinated', 'organized', 'supervised', 'trained', 'facilitated', 'negotiated', 'resolved', 'analyzed'];
+    const summaryLower = resumeData.summary.toLowerCase();
+    if (!actionVerbs.some(verb => summaryLower.includes(verb))) {
+      suggestions.push("Include action verbs in summary (+10 points)");
+    }
+    
+    return suggestions;
+  };
+
+  const atsScore = calculateATSScore();
+  const improvementSuggestions = generateImprovementSuggestions();
+
   const printResume = () => {
     window.print();
   };
@@ -191,6 +324,15 @@ const PreviewPage = () => {
     { id: 'charcoal', name: 'Charcoal', color: 'hsl(0, 0%, 25%)' }
   ];
 
+  // Determine score status
+  const getScoreStatus = (score) => {
+    if (score <= 40) return { status: 'Needs Work', color: '#e53e3e' }; // Red
+    if (score <= 70) return { status: 'Getting There', color: '#dd6b20' }; // Amber
+    return { status: 'Strong Resume', color: '#38a169' }; // Green
+  };
+
+  const scoreStatus = getScoreStatus(atsScore);
+
   return (
     <div className={`preview-page template-${selectedTemplate} color-${selectedColor}`}>
       <div className="top-nav">
@@ -256,6 +398,57 @@ const PreviewPage = () => {
             ))}
           </div>
         </div>
+      </div>
+      
+      {/* ATS Score Section */}
+      <div className="ats-score-section">
+        <div className="score-display">
+          <div className="circular-progress">
+            <svg viewBox="0 0 36 36" className="circular-chart">
+              <path
+                className="circle-bg"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+                stroke="#eee"
+                strokeWidth="3"
+              />
+              <path
+                className="circle"
+                stroke={scoreStatus.color}
+                strokeWidth="3"
+                strokeLinecap="round"
+                fill="transparent"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+                style={{
+                  strokeDasharray: `${atsScore}, 100`,
+                }}
+              />
+              <text x="18" y="20.5" className="percentage" fill={scoreStatus.color}>
+                {atsScore}
+              </text>
+            </svg>
+          </div>
+          <div className="score-info">
+            <div className="score-value">{atsScore}/100</div>
+            <div className="score-status" style={{ color: scoreStatus.color }}>
+              {scoreStatus.status}
+            </div>
+          </div>
+        </div>
+        
+        {improvementSuggestions.length > 0 && (
+          <div className="improvement-suggestions">
+            <h3>How to improve:</h3>
+            <ul>
+              {improvementSuggestions.slice(0, 3).map((suggestion, index) => (
+                <li key={index}>{suggestion}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       
       <div className="resume-container">

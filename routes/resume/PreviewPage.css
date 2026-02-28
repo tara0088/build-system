@@ -402,6 +402,103 @@
   border-color: #4297d4;
 }
 
+/* ATS Score Section */
+.ats-score-section {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.circular-progress {
+  width: 60px;
+  height: 60px;
+}
+
+.circular-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
+
+.percentage {
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.score-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.score-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2d3748;
+}
+
+.score-status {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.improvement-suggestions {
+  flex: 1;
+  min-width: 250px;
+}
+
+.improvement-suggestions h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.improvement-suggestions ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  list-style-type: disc;
+}
+
+.improvement-suggestions li {
+  margin-bottom: 0.3rem;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
 .top-nav {
   display: flex;
   justify-content: center;
@@ -620,7 +717,8 @@
   .export-buttons,
   .template-and-color-picker,
   .page-title,
-  .validation-warning {
+  .validation-warning,
+  .ats-score-section {
     display: none !important;
   }
   
@@ -690,5 +788,15 @@
   
   .date {
     font-weight: normal;
+  }
+  
+  .ats-score-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .score-display {
+    justify-content: center;
   }
 }

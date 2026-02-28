@@ -270,51 +270,130 @@ const BuilderPage = () => {
   const calculateATSScore = () => {
     let score = 0;
     
-    // +15 if summary length is 40–120 words
-    const summaryWords = formData.summary.trim().split(/\s+/).filter(word => word.length > 0);
-    if (summaryWords.length >= 40 && summaryWords.length <= 120) {
+    // +10 if name provided
+    if (formData.personalInfo.name) {
+      score += 10;
+    }
+    
+    // +10 if email provided
+    if (formData.personalInfo.email) {
+      score += 10;
+    }
+    
+    // +10 if summary > 50 chars
+    if (formData.summary && formData.summary.length > 50) {
+      score += 10;
+    }
+    
+    // +15 if at least 1 experience entry with bullets
+    if (formData.experience.length >= 1 && 
+        formData.experience.some(exp => exp.description && exp.description.trim() !== '')) {
       score += 15;
     }
     
-    // +10 if at least 2 projects
-    if (formData.projects.length >= 2) {
+    // +10 if at least 1 education entry
+    if (formData.education.length >= 1 && 
+        formData.education.some(edu => edu.institution || edu.degree || edu.year)) {
       score += 10;
     }
     
-    // +10 if at least 1 experience entry
-    if (formData.experience.length >= 1 && formData.experience.some(exp => exp.company && exp.position)) {
+    // +10 if at least 5 skills added
+    const totalSkills = formData.skills.technical.length + 
+                       formData.skills.soft.length + 
+                       formData.skills.tools.length;
+    if (totalSkills >= 5) {
       score += 10;
     }
     
-    // +10 if skills list has ≥ 8 items total
-    const totalSkills = formData.skills.technical.length + formData.skills.soft.length + formData.skills.tools.length;
-    if (totalSkills >= 8) {
+    // +10 if at least 1 project added
+    if (formData.projects.length >= 1 && 
+        formData.projects.some(proj => proj.name || proj.description)) {
       score += 10;
     }
     
-    // +10 if GitHub or LinkedIn link exists
-    if (formData.links.github.trim() || formData.links.linkedin.trim()) {
-      score += 10;
+    // +5 if phone provided
+    if (formData.personalInfo.phone) {
+      score += 5;
     }
     
-    // +15 if any experience/project bullet contains a number (%, X, k, etc.)
-    const hasNumbers = [
-      ...formData.experience.flatMap(exp => [exp.description]),
-      ...formData.projects.flatMap(proj => [proj.description])
-    ].some(text => /\d|%/i.test(text));
-    
-    if (hasNumbers) {
-      score += 15;
+    // +5 if LinkedIn provided
+    if (formData.links.linkedin) {
+      score += 5;
     }
     
-    // +10 if education section has complete fields
-    if (formData.education.length > 0 && 
-        formData.education.every(edu => edu.institution && edu.degree && edu.year)) {
+    // +5 if GitHub provided
+    if (formData.links.github) {
+      score += 5;
+    }
+    
+    // +10 if summary contains action verbs
+    const actionVerbs = ['built', 'led', 'designed', 'improved', 'managed', 'created', 'developed', 'implemented', 'optimized', 'established', 'launched', 'executed', 'coordinated', 'organized', 'supervised', 'trained', 'facilitated', 'negotiated', 'resolved', 'analyzed'];
+    const summaryLower = formData.summary.toLowerCase();
+    if (actionVerbs.some(verb => summaryLower.includes(verb))) {
       score += 10;
     }
     
     // Cap at 100
     return Math.min(score, 100);
+  };
+
+  // Generate improvement suggestions
+  const generateImprovementSuggestions = () => {
+    const suggestions = [];
+    
+    if (!formData.personalInfo.name) {
+      suggestions.push("Add your name (+10 points)");
+    }
+    
+    if (!formData.personalInfo.email) {
+      suggestions.push("Add your email (+10 points)");
+    }
+    
+    if (!formData.summary || formData.summary.length <= 50) {
+      suggestions.push("Write a stronger summary (>50 chars, +10 points)");
+    }
+    
+    if (formData.experience.length === 0 || 
+        !formData.experience.some(exp => exp.description && exp.description.trim() !== '')) {
+      suggestions.push("Add at least 1 experience with bullet points (+15 points)");
+    }
+    
+    if (formData.education.length === 0 || 
+        !formData.education.some(edu => edu.institution || edu.degree || edu.year)) {
+      suggestions.push("Add at least 1 education entry (+10 points)");
+    }
+    
+    const totalSkills = formData.skills.technical.length + 
+                       formData.skills.soft.length + 
+                       formData.skills.tools.length;
+    if (totalSkills < 5) {
+      suggestions.push(`Add more skills (currently ${totalSkills}, need 5+, +10 points)`);
+    }
+    
+    if (formData.projects.length === 0 || 
+        !formData.projects.some(proj => proj.name || proj.description)) {
+      suggestions.push("Add at least 1 project (+10 points)");
+    }
+    
+    if (!formData.personalInfo.phone) {
+      suggestions.push("Add your phone (+5 points)");
+    }
+    
+    if (!formData.links.linkedin) {
+      suggestions.push("Add LinkedIn profile (+5 points)");
+    }
+    
+    if (!formData.links.github) {
+      suggestions.push("Add GitHub profile (+5 points)");
+    }
+    
+    const actionVerbs = ['built', 'led', 'designed', 'improved', 'managed', 'created', 'developed', 'implemented', 'optimized', 'established', 'launched', 'executed', 'coordinated', 'organized', 'supervised', 'trained', 'facilitated', 'negotiated', 'resolved', 'analyzed'];
+    const summaryLower = formData.summary.toLowerCase();
+    if (!actionVerbs.some(verb => summaryLower.includes(verb))) {
+      suggestions.push("Include action verbs in summary (+10 points)");
+    }
+    
+    return suggestions;
   };
 
   // Generate suggestions based on missing elements
@@ -401,6 +480,7 @@ const BuilderPage = () => {
   const atsScore = calculateATSScore();
   const suggestions = generateSuggestions();
   const improvements = generateImprovements();
+  const improvementSuggestions = generateImprovementSuggestions();
 
   // Template thumbnails data
   const templates = [
@@ -417,6 +497,15 @@ const BuilderPage = () => {
     { id: 'forest', name: 'Forest', color: 'hsl(150, 50%, 30%)' },
     { id: 'charcoal', name: 'Charcoal', color: 'hsl(0, 0%, 25%)' }
   ];
+
+  // Determine score status
+  const getScoreStatus = (score) => {
+    if (score <= 40) return { status: 'Needs Work', color: '#e53e3e' }; // Red
+    if (score <= 70) return { status: 'Getting There', color: '#dd6b20' }; // Amber
+    return { status: 'Strong Resume', color: '#38a169' }; // Green
+  };
+
+  const scoreStatus = getScoreStatus(atsScore);
 
   return (
     <div className={`builder-page template-${selectedTemplate} color-${selectedColor}`}>
@@ -474,34 +563,49 @@ const BuilderPage = () => {
         {/* Left Column - Form Sections */}
         <div className="form-sections">
           <div className="ats-score-section">
-            <div className="score-meter">
-              <div className="score-value">{atsScore}/100</div>
-              <div className="score-label">ATS Readiness Score</div>
-              <div className="meter-container">
-                <div 
-                  className="meter-fill" 
-                  style={{ width: `${atsScore}%` }}
-                ></div>
+            <div className="score-display">
+              <div className="circular-progress">
+                <svg viewBox="0 0 36 36" className="circular-chart">
+                  <path
+                    className="circle-bg"
+                    d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+                    stroke="#eee"
+                    strokeWidth="3"
+                  />
+                  <path
+                    className="circle"
+                    stroke={scoreStatus.color}
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    fill="transparent"
+                    d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+                    style={{
+                      strokeDasharray: `${atsScore}, 100`,
+                    }}
+                  />
+                  <text x="18" y="20.5" className="percentage" fill={scoreStatus.color}>
+                    {atsScore}
+                  </text>
+                </svg>
+              </div>
+              <div className="score-info">
+                <div className="score-value">{atsScore}/100</div>
+                <div className="score-status" style={{ color: scoreStatus.color }}>
+                  {scoreStatus.status}
+                </div>
               </div>
             </div>
             
-            {suggestions.length > 0 && (
-              <div className="suggestions-section">
-                <h3>Suggestions:</h3>
+            {improvementSuggestions.length > 0 && (
+              <div className="improvement-suggestions">
+                <h3>How to improve:</h3>
                 <ul>
-                  {suggestions.map((suggestion, index) => (
+                  {improvementSuggestions.slice(0, 3).map((suggestion, index) => (
                     <li key={index}>{suggestion}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {improvements.length > 0 && (
-              <div className="improvements-section">
-                <h3>Top 3 Improvements:</h3>
-                <ul>
-                  {improvements.map((improvement, index) => (
-                    <li key={index}>{improvement}</li>
                   ))}
                 </ul>
               </div>

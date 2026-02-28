@@ -256,7 +256,7 @@
 }
 
 .builder-page.color-burgundy .template-btn.active,
-.builder-page.color-burgundy .print-btn,
+.builder-page.color-navy .print-btn,
 .builder-page.color-burgundy .add-btn,
 .builder-page.color-burgundy .suggest-btn {
   background-color: hsl(345, 60%, 35%);
@@ -358,61 +358,91 @@
   padding: 1.5rem;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 
-.score-meter {
-  text-align: center;
-  margin-bottom: 1.5rem;
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.circular-progress {
+  width: 60px;
+  height: 60px;
+}
+
+.circular-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
+
+.percentage {
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.score-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .score-value {
-  font-size: 2.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #2d3748;
-  margin-bottom: 0.5rem;
 }
 
-.score-label {
+.score-status {
   font-size: 0.9rem;
-  color: #4a5568;
-  margin-bottom: 1rem;
+  font-weight: 500;
 }
 
-.meter-container {
-  width: 100%;
-  height: 12px;
-  background-color: #e2e8f0;
-  border-radius: 6px;
-  overflow: hidden;
+.improvement-suggestions {
+  flex: 1;
+  min-width: 250px;
 }
 
-.meter-fill {
-  height: 100%;
-  background-color: #48bb78;
-  transition: width 0.3s ease;
-}
-
-.suggestions-section,
-.improvements-section {
-  margin-top: 1rem;
-}
-
-.suggestions-section h3,
-.improvements-section h3 {
-  margin: 0 0 0.5rem 0;
+.improvement-suggestions h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
   color: #2d3748;
   font-size: 1rem;
 }
 
-.suggestions-section ul,
-.improvements-section ul {
+.improvement-suggestions ul {
   margin: 0;
   padding-left: 1.2rem;
   list-style-type: disc;
 }
 
-.suggestions-section li,
-.improvements-section li {
+.improvement-suggestions li {
   margin-bottom: 0.3rem;
   color: #4a5568;
   font-size: 0.9rem;
@@ -873,5 +903,15 @@ textarea {
   .template-and-color-picker {
     flex-direction: column;
     gap: 1rem;
+  }
+  
+  .ats-score-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .score-display {
+    justify-content: center;
   }
 }
