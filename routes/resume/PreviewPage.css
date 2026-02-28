@@ -5,6 +5,61 @@
   font-family: 'Georgia', 'Times New Roman', serif;
 }
 
+/* Export buttons styles */
+.export-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.export-btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #cbd5e0;
+  background-color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.export-btn:hover {
+  background-color: #edf2f7;
+}
+
+.print-btn {
+  background-color: #4297d4;
+  color: white;
+  border-color: #4297d4;
+}
+
+.print-btn:hover {
+  background-color: #2b6cb0;
+}
+
+.copy-btn {
+  background-color: #48bb78;
+  color: white;
+  border-color: #48bb78;
+}
+
+.copy-btn:hover {
+  background-color: #38a169;
+}
+
+/* Validation warning styles */
+.validation-warning {
+  background-color: #fffbeb;
+  color: #d69e2e;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #d69e2e;
+  font-weight: 500;
+}
+
 /* Template selector styles */
 .template-selector {
   display: flex;
@@ -218,15 +273,23 @@
 @media print {
   body {
     background-color: white;
+    margin: 0;
+    padding: 0;
   }
   
   .preview-page {
     padding: 0;
     background-color: white;
+    font-size: 12pt;
+    line-height: 1.4;
   }
   
-  .top-nav {
-    display: none;
+  .top-nav,
+  .export-buttons,
+  .template-selector,
+  .page-title,
+  .validation-warning {
+    display: none !important;
   }
   
   .resume-container {
@@ -234,6 +297,47 @@
     border: none;
     padding: 0;
     margin: 0;
+    max-width: 100%;
+  }
+  
+  /* Ensure white background only */
+  .resume-container,
+  .resume-header,
+  .resume-section {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  /* Clean margins and consistent spacing */
+  .resume-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .resume-section {
+    margin-bottom: 1.2rem;
+    page-break-inside: avoid;
+  }
+  
+  .experience-entry,
+  .project-entry {
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+  
+  /* Ensure no cut-off sections */
+  h2 {
+    page-break-after: avoid;
+  }
+  
+  /* Consistent spacing scale */
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.3rem; }
+  h3 { font-size: 1.1rem; }
+  
+  p, li {
+    orphans: 3;
+    widows: 3;
   }
 }
 

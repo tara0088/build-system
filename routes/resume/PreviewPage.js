@@ -38,6 +38,87 @@ const PreviewPage = () => {
     }
   }, []);
 
+  // Check for validation issues
+  const hasValidationIssues = !resumeData.personalInfo.name || 
+                             (resumeData.projects.filter(p => p.name || p.description).length === 0 && 
+                              resumeData.experience.filter(e => e.company || e.position).length === 0);
+
+  const printResume = () => {
+    window.print();
+  };
+
+  const copyResumeAsText = () => {
+    let text = '';
+    
+    // Add name
+    if (resumeData.personalInfo.name) {
+      text += `${resumeData.personalInfo.name}\n\n`;
+    }
+    
+    // Add contact info
+    if (resumeData.personalInfo.email) text += `Email: ${resumeData.personalInfo.email}\n`;
+    if (resumeData.personalInfo.phone) text += `Phone: ${resumeData.personalInfo.phone}\n`;
+    if (resumeData.personalInfo.location) text += `Location: ${resumeData.personalInfo.location}\n`;
+    if (resumeData.links.github) text += `GitHub: ${resumeData.links.github}\n`;
+    if (resumeData.links.linkedin) text += `LinkedIn: ${resumeData.links.linkedin}\n`;
+    text += '\n';
+    
+    // Add summary
+    if (resumeData.summary) {
+      text += `Summary\n`;
+      text += `${resumeData.summary}\n\n`;
+    }
+    
+    // Add education
+    if (resumeData.education.filter(edu => edu.institution || edu.degree || edu.year).length > 0) {
+      text += `Education\n`;
+      resumeData.education.filter(edu => edu.institution || edu.degree || edu.year).forEach(edu => {
+        text += `${edu.institution || '[Institution]'} - ${edu.year || '[Year]'}\n`;
+        text += `${edu.degree || '[Degree]'}\n\n`;
+      });
+    }
+    
+    // Add experience
+    if (resumeData.experience.filter(exp => exp.company || exp.position).length > 0) {
+      text += `Experience\n`;
+      resumeData.experience.filter(exp => exp.company || exp.position).forEach(exp => {
+        text += `${exp.position || '[Position]'} - ${exp.company || '[Company]'} (${exp.duration || '[Duration]'})\n`;
+        text += `${exp.description || '[Description]'}\n\n`;
+      });
+    }
+    
+    // Add projects
+    if (resumeData.projects.filter(proj => proj.name || proj.description).length > 0) {
+      text += `Projects\n`;
+      resumeData.projects.filter(proj => proj.name || proj.description).forEach(proj => {
+        text += `${proj.name || '[Project Name]'}\n`;
+        text += `${proj.description || '[Description]'}\n\n`;
+      });
+    }
+    
+    // Add skills
+    if (resumeData.skills) {
+      text += `Skills\n`;
+      text += `${resumeData.skills}\n\n`;
+    }
+    
+    // Add links
+    if (resumeData.links.github || resumeData.links.linkedin) {
+      text += `Links\n`;
+      if (resumeData.links.github) text += `GitHub: ${resumeData.links.github}\n`;
+      if (resumeData.links.linkedin) text += `LinkedIn: ${resumeData.links.linkedin}\n`;
+    }
+
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        alert('Resume copied to clipboard as plain text!');
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('Failed to copy resume to clipboard.');
+      });
+  };
+
   return (
     <div className={`preview-page template-${selectedTemplate}`}>
       <div className="top-nav">
@@ -50,6 +131,21 @@ const PreviewPage = () => {
       <div className="page-title">
         <h1>Resume Preview</h1>
       </div>
+      
+      <div className="export-buttons">
+        <button className="export-btn print-btn" onClick={printResume}>
+          Print / Save as PDF
+        </button>
+        <button className="export-btn copy-btn" onClick={copyResumeAsText}>
+          Copy Resume as Text
+        </button>
+      </div>
+      
+      {hasValidationIssues && (
+        <div className="validation-warning">
+          Your resume may look incomplete.
+        </div>
+      )}
       
       <div className="template-selector">
         <button 
