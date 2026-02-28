@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './BuilderPage.css';
 
 const BuilderPage = () => {
@@ -19,6 +19,24 @@ const BuilderPage = () => {
       linkedin: ''
     }
   });
+
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('resumeBuilderData');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setFormData(parsedData);
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+      }
+    }
+  }, []);
+
+  // Auto-save data to localStorage whenever formData changes
+  useEffect(() => {
+    localStorage.setItem('resumeBuilderData', JSON.stringify(formData));
+  }, [formData]);
 
   const handleChange = (section, field, value, index = null) => {
     if (index !== null) {
@@ -80,18 +98,18 @@ const BuilderPage = () => {
           company: 'Tech Corp', 
           position: 'Senior Software Engineer', 
           duration: 'Jan 2021 - Present', 
-          description: 'Develop and maintain web applications using React and Node.js. Collaborate with cross-functional teams to define, design, and ship new features.' 
+          description: 'Increased application performance by 40%. Developed and maintained web applications using React and Node.js. Collaborated with cross-functional teams to define, design, and ship new features.' 
         },
         { 
           company: 'Startup Inc', 
           position: 'Software Engineer', 
           duration: 'Jun 2019 - Dec 2020', 
-          description: 'Built responsive web applications. Implemented RESTful APIs and integrated third-party services.' 
+          description: 'Built responsive web applications. Implemented RESTful APIs and integrated third-party services. Improved system efficiency by 25%.' 
         }
       ],
       projects: [
-        { name: 'E-commerce Platform', description: 'Full-stack e-commerce solution with React frontend and Node.js backend', link: 'https://github.com/example/project1' },
-        { name: 'Task Management App', description: 'Collaborative task management application with real-time updates', link: 'https://github.com/example/project2' }
+        { name: 'E-commerce Platform', description: 'Full-stack e-commerce solution with React frontend and Node.js backend, serving 10k+ daily active users', link: 'https://github.com/example/project1' },
+        { name: 'Task Management App', description: 'Collaborative task management application with real-time updates, used by 500+ team members', link: 'https://github.com/example/project2' }
       ],
       skills: 'JavaScript, React, Node.js, Express, MongoDB, PostgreSQL, HTML, CSS, Git',
       links: {
@@ -100,6 +118,95 @@ const BuilderPage = () => {
       }
     });
   };
+
+  // Calculate ATS Score
+  const calculateATSScore = () => {
+    let score = 0;
+    
+    // +15 if summary length is 40–120 words
+    const summaryWords = formData.summary.trim().split(/\s+/).filter(word => word.length > 0);
+    if (summaryWords.length >= 40 && summaryWords.length <= 120) {
+      score += 15;
+    }
+    
+    // +10 if at least 2 projects
+    if (formData.projects.length >= 2) {
+      score += 10;
+    }
+    
+    // +10 if at least 1 experience entry
+    if (formData.experience.length >= 1 && formData.experience.some(exp => exp.company && exp.position)) {
+      score += 10;
+    }
+    
+    // +10 if skills list has ≥ 8 items
+    const skillsList = formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0);
+    if (skillsList.length >= 8) {
+      score += 10;
+    }
+    
+    // +10 if GitHub or LinkedIn link exists
+    if (formData.links.github.trim() || formData.links.linkedin.trim()) {
+      score += 10;
+    }
+    
+    // +15 if any experience/project bullet contains a number (%, X, k, etc.)
+    const hasNumbers = [
+      ...formData.experience.flatMap(exp => [exp.description]),
+      ...formData.projects.flatMap(proj => [proj.description])
+    ].some(text => /\d|%/i.test(text));
+    
+    if (hasNumbers) {
+      score += 15;
+    }
+    
+    // +10 if education section has complete fields
+    if (formData.education.length > 0 && 
+        formData.education.every(edu => edu.institution && edu.degree && edu.year)) {
+      score += 10;
+    }
+    
+    // Cap at 100
+    return Math.min(score, 100);
+  };
+
+  // Generate suggestions based on missing elements
+  const generateSuggestions = () => {
+    const suggestions = [];
+    const summaryWords = formData.summary.trim().split(/\s+/).filter(word => word.length > 0);
+    const skillsList = formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0);
+    
+    if (summaryWords.length < 40 || summaryWords.length > 120) {
+      suggestions.push("Write a stronger summary (40–120 words).");
+    }
+    
+    if (formData.projects.length < 2) {
+      suggestions.push("Add at least 2 projects.");
+    }
+    
+    if (skillsList.length < 8) {
+      suggestions.push("Add more skills (target 8+).");
+    }
+    
+    const hasNumbers = [
+      ...formData.experience.flatMap(exp => [exp.description]),
+      ...formData.projects.flatMap(proj => [proj.description])
+    ].some(text => /\d|%/i.test(text));
+    
+    if (!hasNumbers) {
+      suggestions.push("Add measurable impact (numbers) in bullets.");
+    }
+    
+    if (formData.education.length === 0 || 
+        !formData.education.every(edu => edu.institution && edu.degree && edu.year)) {
+      suggestions.push("Complete your education details.");
+    }
+    
+    return suggestions.slice(0, 3); // Return max 3 suggestions
+  };
+
+  const atsScore = calculateATSScore();
+  const suggestions = generateSuggestions();
 
   return (
     <div className="builder-page">
@@ -117,6 +224,30 @@ const BuilderPage = () => {
       <div className="builder-container">
         {/* Left Column - Form Sections */}
         <div className="form-sections">
+          <div className="ats-score-section">
+            <div className="score-meter">
+              <div className="score-value">{atsScore}/100</div>
+              <div className="score-label">ATS Readiness Score</div>
+              <div className="meter-container">
+                <div 
+                  className="meter-fill" 
+                  style={{ width: `${atsScore}%` }}
+                ></div>
+              </div>
+            </div>
+            
+            {suggestions.length > 0 && (
+              <div className="suggestions-section">
+                <h3>Suggestions:</h3>
+                <ul>
+                  {suggestions.map((suggestion, index) => (
+                    <li key={index}>{suggestion}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
           <div className="form-group">
             <h2>Personal Info</h2>
             <div className="form-row">
@@ -328,7 +459,7 @@ const BuilderPage = () => {
         <div className="preview-panel">
           <h2>Live Preview</h2>
           <div className="resume-preview">
-            {/* Resume structure placeholder */}
+            {/* Resume structure with actual content */}
             <div className="resume-header">
               <h1>{formData.personalInfo.name || '[Your Name]'}</h1>
               <div className="contact-info">
@@ -340,55 +471,65 @@ const BuilderPage = () => {
               </div>
             </div>
             
-            <div className="section">
-              <h3>Summary</h3>
-              <p>{formData.summary || '[Professional summary will appear here...]'}</p>
-            </div>
+            {formData.summary && (
+              <div className="section">
+                <h3>Summary</h3>
+                <p>{formData.summary}</p>
+              </div>
+            )}
             
-            <div className="section">
-              <h3>Education</h3>
-              {formData.education.map((edu, index) => (
-                <div key={index} className="entry">
-                  <div className="entry-header">
-                    <strong>{edu.institution || '[Institution]'}</strong>
-                    <span>{edu.year || '[Year]'}</span>
+            {formData.education.filter(edu => edu.institution || edu.degree || edu.year).length > 0 && (
+              <div className="section">
+                <h3>Education</h3>
+                {formData.education.filter(edu => edu.institution || edu.degree || edu.year).map((edu, index) => (
+                  <div key={index} className="entry">
+                    <div className="entry-header">
+                      <strong>{edu.institution || '[Institution]'}</strong>
+                      <span>{edu.year || '[Year]'}</span>
+                    </div>
+                    <p>{edu.degree || '[Degree]'}</p>
                   </div>
-                  <p>{edu.degree || '[Degree]'}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
             
-            <div className="section">
-              <h3>Experience</h3>
-              {formData.experience.map((exp, index) => (
-                <div key={index} className="entry">
-                  <div className="entry-header">
-                    <strong>{exp.position || '[Position]'}</strong>
-                    <span>{exp.duration || '[Duration]'}</span>
+            {formData.experience.filter(exp => exp.company || exp.position).length > 0 && (
+              <div className="section">
+                <h3>Experience</h3>
+                {formData.experience.filter(exp => exp.company || exp.position).map((exp, index) => (
+                  <div key={index} className="entry">
+                    <div className="entry-header">
+                      <strong>{exp.position || '[Position]'}</strong>
+                      <span>{exp.duration || '[Duration]'}</span>
+                    </div>
+                    <p>{exp.company || '[Company]'}</p>
+                    <p>{exp.description || '[Experience description will appear here...]'}</p>
                   </div>
-                  <p>{exp.company || '[Company]'}</p>
-                  <p>{exp.description || '[Experience description will appear here...]'}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
             
-            <div className="section">
-              <h3>Projects</h3>
-              {formData.projects.map((proj, index) => (
-                <div key={index} className="entry">
-                  <div className="entry-header">
-                    <strong>{proj.name || '[Project Name]'}</strong>
-                    {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer">{proj.link}</a>}
+            {formData.projects.filter(proj => proj.name || proj.description).length > 0 && (
+              <div className="section">
+                <h3>Projects</h3>
+                {formData.projects.filter(proj => proj.name || proj.description).map((proj, index) => (
+                  <div key={index} className="entry">
+                    <div className="entry-header">
+                      <strong>{proj.name || '[Project Name]'}</strong>
+                      {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer">{proj.link}</a>}
+                    </div>
+                    <p>{proj.description || '[Project description will appear here...]'}</p>
                   </div>
-                  <p>{proj.description || '[Project description will appear here...]'}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
             
-            <div className="section">
-              <h3>Skills</h3>
-              <p>{formData.skills || '[Skills will appear here...]'}</p>
-            </div>
+            {formData.skills && (
+              <div className="section">
+                <h3>Skills</h3>
+                <p>{formData.skills}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

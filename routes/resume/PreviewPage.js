@@ -1,7 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './PreviewPage.css';
 
 const PreviewPage = () => {
+  const [resumeData, setResumeData] = useState({
+    personalInfo: {
+      name: '',
+      email: '',
+      phone: '',
+      location: ''
+    },
+    summary: '',
+    education: [{ institution: '', degree: '', year: '' }],
+    experience: [{ company: '', position: '', duration: '', description: '' }],
+    projects: [{ name: '', description: '', link: '' }],
+    skills: '',
+    links: {
+      github: '',
+      linkedin: ''
+    }
+  });
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('resumeBuilderData');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setResumeData(parsedData);
+      } catch (error) {
+        console.error('Error loading resume data:', error);
+      }
+    }
+  }, []);
+
   return (
     <div className="preview-page">
       <div className="top-nav">
@@ -19,109 +49,92 @@ const PreviewPage = () => {
         <div className="resume-content">
           {/* Resume Header */}
           <header className="resume-header">
-            <h1>[Your Name]</h1>
+            <h1>{resumeData.personalInfo.name || '[Your Name]'}</h1>
             <div className="contact-info">
-              <p>Email: [email@example.com] | Phone: [phone number]</p>
-              <p>Location: [city, state] | GitHub: [github-profile] | LinkedIn: [linkedin-profile]</p>
+              <p>Email: {resumeData.personalInfo.email || '[email@example.com]'} | Phone: {resumeData.personalInfo.phone || '[phone number]'}</p>
+              <p>Location: {resumeData.personalInfo.location || '[city, state]'} 
+                {resumeData.links.github && ` | GitHub: ${resumeData.links.github}`} 
+                {resumeData.links.linkedin && ` | LinkedIn: ${resumeData.links.linkedin}`}</p>
             </div>
           </header>
           
           {/* Summary Section */}
+          {resumeData.summary && (
           <section className="resume-section">
             <h2>Summary</h2>
             <p className="summary-text">
-              [Professional summary will appear here. This is where your professional 
-              experience, skills, and career objectives are concisely presented to 
-              potential employers. A well-crafted summary can make a strong first impression.]
+              {resumeData.summary}
             </p>
           </section>
+          )}
           
           {/* Education Section */}
+          {resumeData.education.filter(edu => edu.institution || edu.degree || edu.year).length > 0 && (
           <section className="resume-section">
             <h2>Education</h2>
-            <div className="education-entry">
-              <div className="entry-header">
-                <h3>[Institution Name]</h3>
-                <span className="date">[Year]</span>
+            {resumeData.education.filter(edu => edu.institution || edu.degree || edu.year).map((edu, index) => (
+              <div key={index} className="education-entry">
+                <div className="entry-header">
+                  <h3>{edu.institution || '[Institution Name]'}</h3>
+                  <span className="date">{edu.year || '[Year]'}</span>
+                </div>
+                <p className="degree">{edu.degree || '[Degree]'} | [Field of Study]</p>
               </div>
-              <p className="degree">[Degree] | [Field of Study]</p>
-            </div>
-            <div className="education-entry">
-              <div className="entry-header">
-                <h3>[Institution Name]</h3>
-                <span className="date">[Year]</span>
-              </div>
-              <p className="degree">[Degree] | [Field of Study]</p>
-            </div>
+            ))}
           </section>
+          )}
           
           {/* Experience Section */}
+          {resumeData.experience.filter(exp => exp.company || exp.position).length > 0 && (
           <section className="resume-section">
             <h2>Experience</h2>
-            <div className="experience-entry">
-              <div className="entry-header">
-                <h3>[Job Title]</h3>
-                <span className="date">[Duration]</span>
+            {resumeData.experience.filter(exp => exp.company || exp.position).map((exp, index) => (
+              <div key={index} className="experience-entry">
+                <div className="entry-header">
+                  <h3>{exp.position || '[Job Title]'}</h3>
+                  <span className="date">{exp.duration || '[Duration]'}</span>
+                </div>
+                <p className="company">{exp.company || '[Company Name]'}</p>
+                <ul className="responsibilities">
+                  {(exp.description || '[Responsibility or achievement goes here]').split('. ').map((item, idx) => 
+                    item.trim() && <li key={idx}>{item.trim()}{!item.trim().endsWith('.') ? '.' : ''}</li>
+                  )}
+                </ul>
               </div>
-              <p className="company">[Company Name]</p>
-              <ul className="responsibilities">
-                <li>[Responsibility or achievement goes here. Describe your role and contributions.]</li>
-                <li>[Highlight quantifiable achievements and key responsibilities relevant to the job.]</li>
-                <li>[Use action verbs to start each bullet point for better readability.]</li>
-              </ul>
-            </div>
-            <div className="experience-entry">
-              <div className="entry-header">
-                <h3>[Job Title]</h3>
-                <span className="date">[Duration]</span>
-              </div>
-              <p className="company">[Company Name]</p>
-              <ul className="responsibilities">
-                <li>[Responsibility or achievement goes here. Describe your role and contributions.]</li>
-                <li>[Highlight quantifiable achievements and key responsibilities relevant to the job.]</li>
-              </ul>
-            </div>
+            ))}
           </section>
+          )}
           
           {/* Projects Section */}
+          {resumeData.projects.filter(proj => proj.name || proj.description).length > 0 && (
           <section className="resume-section">
             <h2>Projects</h2>
-            <div className="project-entry">
-              <div className="entry-header">
-                <h3>[Project Name]</h3>
-                <span className="date">[Date]</span>
+            {resumeData.projects.filter(proj => proj.name || proj.description).map((proj, index) => (
+              <div key={index} className="project-entry">
+                <div className="entry-header">
+                  <h3>{proj.name || '[Project Name]'}</h3>
+                  <span className="date">[Date]</span>
+                </div>
+                <p className="project-description">
+                  {proj.description || '[Brief description of the project, technologies used, and your contribution.]'}
+                </p>
               </div>
-              <p className="project-description">
-                [Brief description of the project, technologies used, and your contribution. 
-                Highlight the impact and outcomes of the project.]
-              </p>
-            </div>
-            <div className="project-entry">
-              <div className="entry-header">
-                <h3>[Project Name]</h3>
-                <span className="date">[Date]</span>
-              </div>
-              <p className="project-description">
-                [Brief description of the project, technologies used, and your contribution. 
-                Highlight the impact and outcomes of the project.]
-              </p>
-            </div>
+            ))}
           </section>
+          )}
           
           {/* Skills Section */}
+          {resumeData.skills && (
           <section className="resume-section">
             <h2>Skills</h2>
             <div className="skills-container">
               <div className="skill-category">
                 <h4>Technical Skills:</h4>
-                <p>[Skill 1], [Skill 2], [Skill 3], [Skill 4], [Skill 5]</p>
-              </div>
-              <div className="skill-category">
-                <h4>Soft Skills:</h4>
-                <p>[Communication], [Leadership], [Problem Solving], [Teamwork]</p>
+                <p>{resumeData.skills}</p>
               </div>
             </div>
           </section>
+          )}
         </div>
       </div>
     </div>
