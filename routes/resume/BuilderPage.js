@@ -13,8 +13,12 @@ const BuilderPage = () => {
     summary: '',
     education: [{ institution: '', degree: '', year: '' }],
     experience: [{ company: '', position: '', duration: '', description: '' }],
-    projects: [{ name: '', description: '', link: '' }],
-    skills: '',
+    projects: [{ name: '', description: '', techStack: [], liveUrl: '', githubUrl: '' }], // Updated structure
+    skills: {
+      technical: [],
+      soft: [],
+      tools: []
+    },
     links: {
       github: '',
       linkedin: ''
@@ -60,6 +64,11 @@ const BuilderPage = () => {
         ...formData,
         personalInfo: { ...formData.personalInfo, [field]: value }
       });
+    } else if (section === 'skills') {
+      setFormData({
+        ...formData,
+        skills: { ...formData.skills, [field]: value }
+      });
     } else {
       setFormData({
         ...formData,
@@ -73,7 +82,7 @@ const BuilderPage = () => {
       ? { institution: '', degree: '', year: '' }
       : section === 'experience'
       ? { company: '', position: '', duration: '', description: '' }
-      : { name: '', description: '', link: '' };
+      : { name: '', description: '', techStack: [], liveUrl: '', githubUrl: '' };
     
     setFormData({
       ...formData,
@@ -85,6 +94,114 @@ const BuilderPage = () => {
     const newArray = [...formData[section]];
     newArray.splice(index, 1);
     setFormData({ ...formData, [section]: newArray });
+  };
+
+  // Skills functions
+  const addSkill = (category, skill) => {
+    if (skill && !formData.skills[category].includes(skill)) {
+      const newSkills = [...formData.skills[category], skill];
+      setFormData({
+        ...formData,
+        skills: {
+          ...formData.skills,
+          [category]: newSkills
+        }
+      });
+    }
+  };
+
+  const removeSkill = (category, skill) => {
+    const newSkills = formData.skills[category].filter(s => s !== skill);
+    setFormData({
+      ...formData,
+      skills: {
+        ...formData.skills,
+        [category]: newSkills
+      }
+    });
+  };
+
+  const handleSkillInput = (category, e) => {
+    if (e.key === 'Enter' && e.target.value.trim()) {
+      addSkill(category, e.target.value.trim());
+      e.target.value = '';
+      e.preventDefault();
+    }
+  };
+
+  const suggestSkills = () => {
+    // Show loading state
+    const originalSkills = {...formData.skills};
+    setFormData({
+      ...formData,
+      skills: {
+        technical: [],
+        soft: [],
+        tools: []
+      }
+    });
+    
+    setTimeout(() => {
+      setFormData({
+        ...formData,
+        skills: {
+          technical: ["TypeScript", "React", "Node.js", "PostgreSQL", "GraphQL"],
+          soft: ["Team Leadership", "Problem Solving"],
+          tools: ["Git", "Docker", "AWS"]
+        }
+      });
+    }, 1000);
+  };
+
+  // Projects functions
+  const addProject = () => {
+    setFormData({
+      ...formData,
+      projects: [
+        ...formData.projects,
+        { name: '', description: '', techStack: [], liveUrl: '', githubUrl: '' }
+      ]
+    });
+  };
+
+  const updateProject = (index, field, value) => {
+    const newProjects = [...formData.projects];
+    newProjects[index] = { ...newProjects[index], [field]: value };
+    setFormData({ ...formData, projects: newProjects });
+  };
+
+  const addTechToProject = (projectIndex, tech) => {
+    if (tech && !formData.projects[projectIndex].techStack.includes(tech)) {
+      const newProjects = [...formData.projects];
+      newProjects[projectIndex] = {
+        ...newProjects[projectIndex],
+        techStack: [...newProjects[projectIndex].techStack, tech]
+      };
+      setFormData({ ...formData, projects: newProjects });
+    }
+  };
+
+  const removeTechFromProject = (projectIndex, tech) => {
+    const newProjects = [...formData.projects];
+    newProjects[projectIndex] = {
+      ...newProjects[projectIndex],
+      techStack: newProjects[projectIndex].techStack.filter(t => t !== tech)
+    };
+    setFormData({ ...formData, projects: newProjects });
+  };
+
+  const handleTechInput = (projectIndex, e) => {
+    if (e.key === 'Enter' && e.target.value.trim()) {
+      addTechToProject(projectIndex, e.target.value.trim());
+      e.target.value = '';
+      e.preventDefault();
+    }
+  };
+
+  const removeProject = (index) => {
+    const newProjects = [...formData.projects];
+    newProjects.splice(index, 1);
+    setFormData({ ...formData, projects: newProjects });
   };
 
   const loadSampleData = () => {
@@ -115,10 +232,26 @@ const BuilderPage = () => {
         }
       ],
       projects: [
-        { name: 'E-commerce Platform', description: 'Full-stack e-commerce solution with React frontend and Node.js backend, serving 10k+ daily active users', link: 'https://github.com/example/project1' },
-        { name: 'Task Management App', description: 'Collaborative task management application with real-time updates, used by 500+ team members', link: 'https://github.com/example/project2' }
+        { 
+          name: 'E-commerce Platform', 
+          description: 'Full-stack e-commerce solution with React frontend and Node.js backend, serving 10k+ daily active users', 
+          techStack: ['React', 'Node.js', 'MongoDB'],
+          liveUrl: 'https://ecommerce-platform-demo.com',
+          githubUrl: 'https://github.com/example/project1' 
+        },
+        { 
+          name: 'Task Management App', 
+          description: 'Collaborative task management application with real-time updates, used by 500+ team members', 
+          techStack: ['Vue.js', 'Express', 'PostgreSQL'],
+          liveUrl: 'https://task-manager-demo.com',
+          githubUrl: 'https://github.com/example/project2' 
+        }
       ],
-      skills: 'JavaScript, React, Node.js, Express, MongoDB, PostgreSQL, HTML, CSS, Git',
+      skills: {
+        technical: ['JavaScript', 'React', 'Node.js', 'Express', 'MongoDB', 'PostgreSQL', 'HTML', 'CSS', 'Git'],
+        soft: ['Communication', 'Leadership', 'Problem Solving', 'Teamwork'],
+        tools: ['VS Code', 'Git', 'Docker', 'AWS', 'Jira']
+      },
       links: {
         github: 'https://github.com/johndoe',
         linkedin: 'https://linkedin.com/in/johndoe'
@@ -146,9 +279,9 @@ const BuilderPage = () => {
       score += 10;
     }
     
-    // +10 if skills list has ≥ 8 items
-    const skillsList = formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0);
-    if (skillsList.length >= 8) {
+    // +10 if skills list has ≥ 8 items total
+    const totalSkills = formData.skills.technical.length + formData.skills.soft.length + formData.skills.tools.length;
+    if (totalSkills >= 8) {
       score += 10;
     }
     
@@ -181,7 +314,7 @@ const BuilderPage = () => {
   const generateSuggestions = () => {
     const suggestions = [];
     const summaryWords = formData.summary.trim().split(/\s+/).filter(word => word.length > 0);
-    const skillsList = formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0);
+    const totalSkills = formData.skills.technical.length + formData.skills.soft.length + formData.skills.tools.length;
     
     if (summaryWords.length < 40 || summaryWords.length > 120) {
       suggestions.push("Write a stronger summary (40–120 words).");
@@ -191,8 +324,8 @@ const BuilderPage = () => {
       suggestions.push("Add at least 2 projects.");
     }
     
-    if (skillsList.length < 8) {
-      suggestions.push("Add more skills (target 8+).");
+    if (totalSkills < 8) {
+      suggestions.push("Add more skills (target 8+ total).");
     }
     
     const hasNumbers = [
@@ -216,7 +349,7 @@ const BuilderPage = () => {
   const generateImprovements = () => {
     const improvements = [];
     const summaryWords = formData.summary.trim().split(/\s+/).filter(word => word.length > 0);
-    const skillsList = formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0);
+    const totalSkills = formData.skills.technical.length + formData.skills.soft.length + formData.skills.tools.length;
     
     if (formData.projects.length < 2) {
       improvements.push("Consider adding more projects to showcase your skills.");
@@ -235,8 +368,8 @@ const BuilderPage = () => {
       improvements.push("Expand your summary to at least 40 words.");
     }
     
-    if (skillsList.length < 8) {
-      improvements.push("Add more skills to reach at least 8 items.");
+    if (totalSkills < 8) {
+      improvements.push("Add more skills to reach at least 8 items total.");
     }
     
     if (formData.experience.length === 0) {
@@ -474,60 +607,167 @@ const BuilderPage = () => {
             ))}
           </div>
 
+          {/* Projects Section */}
           <div className="form-group">
             <div className="section-header">
               <h2>Projects</h2>
-              <button type="button" className="add-btn" onClick={() => addEntry('projects')}>
-                + Add Entry
+              <button type="button" className="add-btn" onClick={addProject}>
+                + Add Project
               </button>
             </div>
-            {formData.projects.map((proj, index) => (
-              <div key={index} className="entry-form">
-                <input
-                  type="text"
-                  placeholder="Project Name"
-                  value={proj.name}
-                  onChange={(e) => handleChange('projects', 'name', e.target.value, index)}
-                />
-                <textarea
-                  placeholder="Description..."
-                  rows="3"
-                  value={proj.description}
-                  onChange={(e) => handleChange('projects', 'description', e.target.value, index)}
-                />
-                <input
-                  type="url"
-                  placeholder="Project Link"
-                  value={proj.link}
-                  onChange={(e) => handleChange('projects', 'link', e.target.value, index)}
-                />
-                {!startsWithActionVerb(proj.description) && proj.description.trim() && (
-                  <div className="guidance-suggestion">Start with a strong action verb.</div>
-                )}
-                {proj.description.trim() && !hasNumericIndicator(proj.description) && (
-                  <div className="guidance-suggestion">Add measurable impact (numbers).</div>
-                )}
-                {index > 0 && (
+            {formData.projects.map((project, index) => (
+              <div key={index} className="project-accordion">
+                <div className="project-header">
+                  <input
+                    type="text"
+                    placeholder="Project Title"
+                    value={project.name}
+                    onChange={(e) => updateProject(index, 'name', e.target.value)}
+                  />
                   <button 
                     type="button" 
                     className="remove-btn"
-                    onClick={() => removeEntry('projects', index)}
+                    onClick={() => removeProject(index)}
+                    title="Delete Project"
                   >
-                    Remove
+                    ×
                   </button>
-                )}
+                </div>
+                <div className="project-content">
+                  <textarea
+                    placeholder="Description (max 200 chars)"
+                    rows="3"
+                    value={project.description}
+                    maxLength="200"
+                    onChange={(e) => updateProject(index, 'description', e.target.value)}
+                  />
+                  <div className="char-counter">{project.description.length}/200</div>
+                  
+                  <div className="tech-stack-input">
+                    <input
+                      type="text"
+                      placeholder="Add technology (press Enter)"
+                      onKeyDown={(e) => handleTechInput(index, e)}
+                    />
+                    <div className="tech-tags">
+                      {project.techStack.map((tech, techIndex) => (
+                        <span key={techIndex} className="tech-tag">
+                          {tech}
+                          <button 
+                            type="button" 
+                            onClick={() => removeTechFromProject(index, tech)}
+                            className="remove-tech-btn"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="form-row">
+                    <input
+                      type="url"
+                      placeholder="Live URL (optional)"
+                      value={project.liveUrl}
+                      onChange={(e) => updateProject(index, 'liveUrl', e.target.value)}
+                    />
+                    <input
+                      type="url"
+                      placeholder="GitHub URL (optional)"
+                      value={project.githubUrl}
+                      onChange={(e) => updateProject(index, 'githubUrl', e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
 
+          {/* Skills Section */}
           <div className="form-group">
             <h2>Skills</h2>
-            <input
-              type="text"
-              placeholder="Skills (comma-separated)"
-              value={formData.skills}
-              onChange={(e) => handleChange('skills', null, e.target.value)}
-            />
+            <div className="skills-categories">
+              <div className="skill-category">
+                <div className="category-header">
+                  <h3>Technical Skills ({formData.skills.technical.length})</h3>
+                  <button type="button" className="suggest-btn" onClick={suggestSkills}>
+                    ✨ Suggest Skills
+                  </button>
+                </div>
+                <div className="skill-input-container">
+                  <input
+                    type="text"
+                    placeholder="Add technical skill (press Enter)"
+                    onKeyDown={(e) => handleSkillInput('technical', e)}
+                  />
+                  <div className="skill-tags">
+                    {formData.skills.technical.map((skill, index) => (
+                      <span key={index} className="skill-tag">
+                        {skill}
+                        <button 
+                          type="button" 
+                          onClick={() => removeSkill('technical', skill)}
+                          className="remove-skill-btn"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="skill-category">
+                <h3>Soft Skills ({formData.skills.soft.length})</h3>
+                <div className="skill-input-container">
+                  <input
+                    type="text"
+                    placeholder="Add soft skill (press Enter)"
+                    onKeyDown={(e) => handleSkillInput('soft', e)}
+                  />
+                  <div className="skill-tags">
+                    {formData.skills.soft.map((skill, index) => (
+                      <span key={index} className="skill-tag">
+                        {skill}
+                        <button 
+                          type="button" 
+                          onClick={() => removeSkill('soft', skill)}
+                          className="remove-skill-btn"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="skill-category">
+                <h3>Tools & Technologies ({formData.skills.tools.length})</h3>
+                <div className="skill-input-container">
+                  <input
+                    type="text"
+                    placeholder="Add tool/technology (press Enter)"
+                    onKeyDown={(e) => handleSkillInput('tools', e)}
+                  />
+                  <div className="skill-tags">
+                    {formData.skills.tools.map((skill, index) => (
+                      <span key={index} className="skill-tag">
+                        {skill}
+                        <button 
+                          type="button" 
+                          onClick={() => removeSkill('tools', skill)}
+                          className="remove-skill-btn"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="form-group">
@@ -611,21 +851,62 @@ const BuilderPage = () => {
               <div className="section">
                 <h3>Projects</h3>
                 {formData.projects.filter(proj => proj.name || proj.description).map((proj, index) => (
-                  <div key={index} className="entry">
-                    <div className="entry-header">
-                      <strong>{proj.name || '[Project Name]'}</strong>
-                      {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer">{proj.link}</a>}
+                  <div key={index} className="project-card">
+                    <div className="project-header">
+                      <h4>{proj.name || '[Project Name]'}</h4>
+                      <div className="project-links">
+                        {proj.liveUrl && <a href={proj.liveUrl} target="_blank" rel="noopener noreferrer" title="Live URL">🌐</a>}
+                        {proj.githubUrl && <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer" title="GitHub URL">🔗</a>}
+                      </div>
                     </div>
                     <p>{proj.description || '[Project description will appear here...]'}</p>
+                    <div className="tech-stack-tags">
+                      {proj.techStack.map((tech, techIndex) => (
+                        <span key={techIndex} className="tech-tag-preview">{tech}</span>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
             )}
             
-            {formData.skills && (
+            {(formData.skills.technical.length > 0 || formData.skills.soft.length > 0 || formData.skills.tools.length > 0) && (
               <div className="section">
                 <h3>Skills</h3>
-                <p>{formData.skills}</p>
+                <div className="skills-groups">
+                  {formData.skills.technical.length > 0 && (
+                    <div className="skill-group">
+                      <h4>Technical Skills</h4>
+                      <div className="skill-tags-preview">
+                        {formData.skills.technical.map((skill, index) => (
+                          <span key={index} className="skill-tag-preview">{skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {formData.skills.soft.length > 0 && (
+                    <div className="skill-group">
+                      <h4>Soft Skills</h4>
+                      <div className="skill-tags-preview">
+                        {formData.skills.soft.map((skill, index) => (
+                          <span key={index} className="skill-tag-preview">{skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {formData.skills.tools.length > 0 && (
+                    <div className="skill-group">
+                      <h4>Tools & Technologies</h4>
+                      <div className="skill-tags-preview">
+                        {formData.skills.tools.map((skill, index) => (
+                          <span key={index} className="skill-tag-preview">{skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

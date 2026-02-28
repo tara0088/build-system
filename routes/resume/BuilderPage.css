@@ -50,54 +50,6 @@
   font-weight: 300;
 }
 
-.top-nav {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  padding: 1rem;
-  background-color: white;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 1.5rem;
-  border-radius: 8px;
-}
-
-.top-nav a {
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  color: #4a5568;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.top-nav a:hover {
-  background-color: #edf2f7;
-}
-
-.top-nav a.active {
-  background-color: #4297d4;
-  color: white;
-}
-
-.page-title {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.page-title h1 {
-  font-size: 2rem;
-  color: #1a202c;
-  font-weight: 700;
-}
-
-.builder-container {
-  display: flex;
-  gap: 2rem;
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
 .ats-score-section {
   background-color: #f7fafc;
   padding: 1.5rem;
@@ -389,6 +341,191 @@ textarea {
 .entry p {
   margin: 0.25rem 0;
   line-height: 1.5;
+}
+
+/* Skills Categories */
+.skills-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.skill-category {
+  margin-bottom: 1rem;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.suggest-btn {
+  background-color: #805ad5;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.suggest-btn:hover {
+  background-color: #6b46c1;
+}
+
+.skill-input-container {
+  margin-top: 0.5rem;
+}
+
+.skill-tags, .tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.skill-tag, .tech-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e2e8f0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.remove-skill-btn, .remove-tech-btn {
+  background: none;
+  border: none;
+  color: #718096;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-skill-btn:hover, .remove-tech-btn:hover {
+  color: #e53e3e;
+}
+
+/* Projects Accordion */
+.project-accordion {
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #edf2f7;
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 8px 8px 0 0;
+}
+
+.project-header input {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.project-content {
+  padding: 1rem;
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #718096;
+  margin-bottom: 1rem;
+}
+
+.tech-stack-input {
+  margin-bottom: 1rem;
+}
+
+.tech-stack-input input {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.tech-tags {
+  margin-top: 0.5rem;
+}
+
+.tech-tag {
+  background-color: #feb2b2;
+}
+
+/* Project Cards in Preview */
+.project-card {
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.project-links {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.project-links a {
+  text-decoration: none;
+  color: #4297d4;
+  font-size: 1.1rem;
+}
+
+.tech-stack-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.tech-tag-preview {
+  background-color: #e2e8f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.skills-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skill-group h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  color: #2d3748;
+}
+
+.skill-tags-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.skill-tag-preview {
+  background-color: #e2e8f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
 }
 
 @media (max-width: 1024px) {

@@ -13,8 +13,12 @@ const PreviewPage = () => {
     summary: '',
     education: [{ institution: '', degree: '', year: '' }],
     experience: [{ company: '', position: '', duration: '', description: '' }],
-    projects: [{ name: '', description: '', link: '' }],
-    skills: '',
+    projects: [{ name: '', description: '', techStack: [], liveUrl: '', githubUrl: '' }],
+    skills: {
+      technical: [],
+      soft: [],
+      tools: []
+    },
     links: {
       github: '',
       linkedin: ''
@@ -92,14 +96,31 @@ const PreviewPage = () => {
       text += `Projects\n`;
       resumeData.projects.filter(proj => proj.name || proj.description).forEach(proj => {
         text += `${proj.name || '[Project Name]'}\n`;
-        text += `${proj.description || '[Description]'}\n\n`;
+        text += `${proj.description || '[Description]'}\n`;
+        if (proj.techStack && proj.techStack.length > 0) {
+          text += `Tech: ${proj.techStack.join(', ')}\n`;
+        }
+        if (proj.liveUrl) text += `Live: ${proj.liveUrl}\n`;
+        if (proj.githubUrl) text += `GitHub: ${proj.githubUrl}\n`;
+        text += '\n';
       });
     }
     
     // Add skills
-    if (resumeData.skills) {
+    if ((resumeData.skills.technical && resumeData.skills.technical.length > 0) ||
+        (resumeData.skills.soft && resumeData.skills.soft.length > 0) ||
+        (resumeData.skills.tools && resumeData.skills.tools.length > 0)) {
       text += `Skills\n`;
-      text += `${resumeData.skills}\n\n`;
+      if (resumeData.skills.technical && resumeData.skills.technical.length > 0) {
+        text += `Technical: ${resumeData.skills.technical.join(', ')}\n`;
+      }
+      if (resumeData.skills.soft && resumeData.skills.soft.length > 0) {
+        text += `Soft: ${resumeData.skills.soft.join(', ')}\n`;
+      }
+      if (resumeData.skills.tools && resumeData.skills.tools.length > 0) {
+        text += `Tools: ${resumeData.skills.tools.join(', ')}\n`;
+      }
+      text += '\n';
     }
     
     // Add links
@@ -241,20 +262,59 @@ const PreviewPage = () => {
                 <p className="project-description">
                   {proj.description || '[Brief description of the project, technologies used, and your contribution.]'}
                 </p>
+                {proj.techStack && proj.techStack.length > 0 && (
+                  <div className="tech-stack-tags">
+                    {proj.techStack.map((tech, techIndex) => (
+                      <span key={techIndex} className="tech-tag-preview">{tech}</span>
+                    ))}
+                  </div>
+                )}
+                <div className="project-links">
+                  {proj.liveUrl && <a href={proj.liveUrl} target="_blank" rel="noopener noreferrer">Live</a>}
+                  {proj.githubUrl && <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>}
+                </div>
               </div>
             ))}
           </section>
           )}
           
           {/* Skills Section */}
-          {resumeData.skills && (
+          {(resumeData.skills.technical.length > 0 || 
+            resumeData.skills.soft.length > 0 || 
+            resumeData.skills.tools.length > 0) && (
           <section className="resume-section">
             <h2>Skills</h2>
             <div className="skills-container">
-              <div className="skill-category">
-                <h4>Technical Skills:</h4>
-                <p>{resumeData.skills}</p>
-              </div>
+              {resumeData.skills.technical.length > 0 && (
+                <div className="skill-category">
+                  <h4>Technical Skills:</h4>
+                  <div className="skill-tags-preview">
+                    {resumeData.skills.technical.map((skill, index) => (
+                      <span key={index} className="skill-tag-preview">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {resumeData.skills.soft.length > 0 && (
+                <div className="skill-category">
+                  <h4>Soft Skills:</h4>
+                  <div className="skill-tags-preview">
+                    {resumeData.skills.soft.map((skill, index) => (
+                      <span key={index} className="skill-tag-preview">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {resumeData.skills.tools.length > 0 && (
+                <div className="skill-category">
+                  <h4>Tools & Technologies:</h4>
+                  <div className="skill-tags-preview">
+                    {resumeData.skills.tools.map((skill, index) => (
+                      <span key={index} className="skill-tag-preview">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </section>
           )}
