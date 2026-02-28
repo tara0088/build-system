@@ -10,12 +10,16 @@ import BuildPage from '../routes/rb/06-build';
 import TestPage from '../routes/rb/07-test';
 import ShipPage from '../routes/rb/08-ship';
 import ProofPage from '../routes/rb/proof';
+import HomePage from '../routes/resume/HomePage';
+import BuilderPage from '../routes/resume/BuilderPage';
+import PreviewPage from '../routes/resume/PreviewPage';
+import ResumeProofPage from '../routes/resume/ProofPage';
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* AI Resume Builder Routes */}
+        {/* AI Resume Builder Routes (Build Track) */}
         <Route path="/rb/01-problem" element={
           <PremiumLayout currentPage={1}>
             <ProblemPage />
@@ -61,6 +65,13 @@ const App = () => {
             <ProofPage />
           </PremiumLayout>
         } />
+      </Routes>
+      <Routes>
+        {/* AI Resume Builder Main App Routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/builder" element={<BuilderPage />} />
+        <Route path="/preview" element={<PreviewPage />} />
+        <Route path="/proof" element={<ResumeProofPage />} />
       </Routes>
     </Router>
   );
